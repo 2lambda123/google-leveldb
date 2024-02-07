@@ -10,7 +10,7 @@ several different types of files as documented below:
 
 ### Log files
 
-A log file (*.log) stores a sequence of recent updates. Each update is appended
+A log file (\*.log) stores a sequence of recent updates. Each update is appended
 to the current log file. When the log file reaches a pre-determined size
 (approximately 4MB by default), it is converted to a sorted table (see below)
 and a new log file is created for future updates.
@@ -21,7 +21,7 @@ reflect all logged updates.
 
 ## Sorted tables
 
-A sorted table (*.ldb) stores a sequence of entries sorted by key. Each entry is
+A sorted table (\*.ldb) stores a sequence of entries sorted by key. Each entry is
 either a value for the key, or a deletion marker for the key. (Deletion markers
 are kept around to hide obsolete values present in older sorted tables).
 
@@ -60,7 +60,7 @@ Informational messages are printed to files named LOG and LOG.old.
 
 ### Others
 
-Other files used for miscellaneous purposes may also be present (LOCK, *.dbtmp).
+Other files used for miscellaneous purposes may also be present (LOCK, \*.dbtmp).
 
 ## Level 0
 
@@ -80,7 +80,7 @@ When the size of level L exceeds its limit, we compact it in a background
 thread. The compaction picks a file from level L and all overlapping files from
 the next level L+1. Note that if a level-L file overlaps only part of a
 level-(L+1) file, the entire file at level-(L+1) is used as an input to the
-compaction and will be discarded after the compaction.  Aside: because level-0
+compaction and will be discarded after the compaction. Aside: because level-0
 is special (files in it may overlap each other), we treat compactions from
 level-0 to level-1 specially: a level-0 compaction may pick more than one
 level-0 file in case some of these files overlap each other.
@@ -89,7 +89,7 @@ A compaction merges the contents of the picked files to produce a sequence of
 level-(L+1) files. We switch to producing a new level-(L+1) file after the
 current output file has reached the target file size (2MB). We also switch to a
 new output file when the key range of the current output file has grown enough
-to overlap more than ten level-(L+2) files.  This last rule ensures that a later
+to overlap more than ten level-(L+2) files. This last rule ensures that a later
 compaction of a level-(L+1) file will not pick up too much data from
 level-(L+2).
 
@@ -120,7 +120,7 @@ compaction cost will be approximately 0.5 second.
 
 If we throttle the background writing to something small, say 10% of the full
 100MB/s speed, a compaction may take up to 5 seconds. If the user is writing at
-10MB/s, we might build up lots of level-0 files (~50 to hold the 5*10MB). This
+10MB/s, we might build up lots of level-0 files (~50 to hold the 5\*10MB). This
 may significantly increase the cost of reads due to the overhead of merging more
 files together on every read.
 
@@ -140,15 +140,14 @@ we will only need to worry about the O(N) complexity in the merging iterator.
 
 Instead of always making 2MB files, we could make larger files for larger levels
 to reduce the total file count, though at the expense of more bursty
-compactions.  Alternatively, we could shard the set of files into multiple
+compactions. Alternatively, we could shard the set of files into multiple
 directories.
 
 An experiment on an ext3 filesystem on Feb 04, 2011 shows the following timings
 to do 100K file opens in directories with varying number of files:
 
-
 | Files in directory | Microseconds to open a file |
-|-------------------:|----------------------------:|
+| -----------------: | --------------------------: |
 |               1000 |                           9 |
 |              10000 |                          10 |
 |             100000 |                          16 |
@@ -157,12 +156,12 @@ So maybe even the sharding is not necessary on modern filesystems?
 
 ## Recovery
 
-* Read CURRENT to find name of the latest committed MANIFEST
-* Read the named MANIFEST file
-* Clean up stale files
-* We could open all sstables here, but it is probably better to be lazy...
-* Convert log chunk to a new level-0 sstable
-* Start directing new writes to a new log file with recovered sequence#
+- Read CURRENT to find name of the latest committed MANIFEST
+- Read the named MANIFEST file
+- Clean up stale files
+- We could open all sstables here, but it is probably better to be lazy...
+- Convert log chunk to a new level-0 sstable
+- Start directing new writes to a new log file with recovered sequence#
 
 ## Garbage collection of files
 
