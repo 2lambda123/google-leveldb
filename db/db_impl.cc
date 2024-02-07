@@ -4,14 +4,6 @@
 
 #include "db/db_impl.h"
 
-#include <algorithm>
-#include <atomic>
-#include <cstdint>
-#include <cstdio>
-#include <set>
-#include <string>
-#include <vector>
-
 #include "db/builder.h"
 #include "db/db_iter.h"
 #include "db/dbformat.h"
@@ -22,11 +14,20 @@
 #include "db/table_cache.h"
 #include "db/version_set.h"
 #include "db/write_batch_internal.h"
+#include <algorithm>
+#include <atomic>
+#include <cstdint>
+#include <cstdio>
+#include <set>
+#include <string>
+#include <vector>
+
 #include "leveldb/db.h"
 #include "leveldb/env.h"
 #include "leveldb/status.h"
 #include "leveldb/table.h"
 #include "leveldb/table_builder.h"
+
 #include "port/port.h"
 #include "table/block.h"
 #include "table/merger.h"
@@ -977,13 +978,13 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
       last_sequence_for_key = ikey.sequence;
     }
 #if 0
-    Log(options_.info_log,
-        "  Compact: %s, seq %d, type: %d %d, drop: %d, is_base: %d, "
-        "%d smallest_snapshot: %d",
-        ikey.user_key.ToString().c_str(),
-        (int)ikey.sequence, ikey.type, kTypeValue, drop,
-        compact->compaction->IsBaseLevelForKey(ikey.user_key),
-        (int)last_sequence_for_key, (int)compact->smallest_snapshot);
+        Log(options_.info_log,
+            "  Compact: %s, seq %d, type: %d %d, drop: %d, is_base: %d, "
+            "%d smallest_snapshot: %d",
+            ikey.user_key.ToString().c_str(),
+            (int)ikey.sequence, ikey.type, kTypeValue, drop,
+            compact->compaction->IsBaseLevelForKey(ikey.user_key),
+            (int)last_sequence_for_key, (int)compact->smallest_snapshot);
 #endif
 
     if (!drop) {
